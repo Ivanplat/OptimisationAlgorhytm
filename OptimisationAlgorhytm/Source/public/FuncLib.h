@@ -1,1 +1,0 @@
-float TestFunc(int n);
