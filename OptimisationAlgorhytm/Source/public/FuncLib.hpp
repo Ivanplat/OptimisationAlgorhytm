@@ -2,13 +2,18 @@
 #include <vector>
 #include <functional>
 
+enum class E_TestFunction
+{
+	Rastrigin,
+	Other
+};
 
 class GWOAlgorhytm
 {
 	typedef std::vector<std::pair<std::vector<float>, float>> ResV;
 public:
 	explicit GWOAlgorhytm() noexcept = default;
-	explicit GWOAlgorhytm(int NumberOfPopulation, int MaxIterations, float LBound, float UBound) noexcept : NumberOfPopulation(NumberOfPopulation), MaxIterations(MaxIterations), LBound(LBound), UBound(UBound) {}
+	explicit GWOAlgorhytm(int NumberOfPopulation, int MaxIterations, float LBound, float UBound, E_TestFunction TestFunction) noexcept : NumberOfPopulation(NumberOfPopulation), MaxIterations(MaxIterations), LBound(LBound), UBound(UBound), TestFunction(TestFunction){}
 	virtual ~GWOAlgorhytm() noexcept = default;
 public:
 	std::pair<std::vector<float>, float> TestFunc(std::vector<float> InV);
@@ -40,6 +45,7 @@ private:
 	std::pair<std::vector<float>, float> BestA;
 	std::pair<std::vector<float>, float> BestB;
 	std::pair<std::vector<float>, float> BestD;
+	E_TestFunction TestFunction;
 };
 
 
@@ -51,6 +57,6 @@ public:
 	explicit TestingFunctions() noexcept = default;
 	virtual ~TestingFunctions() noexcept = default;
 public:
-	std::pair<std::vector<float>, float> DiffFunc(std::vector<float>& InV);
+	std::pair<std::vector<float>, float> DiffFunc(E_TestFunction TestFunction, std::vector<float>& InV);
 	std::pair<std::vector<float>, float> RastriginFunction(std::vector<float> InV);
 };

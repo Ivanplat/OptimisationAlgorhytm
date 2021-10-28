@@ -34,7 +34,7 @@ void GWOAlgorhytm::FirstIter()
 
 
 		LRes[i].first = { x1, x2 };
-		LRes[i] = TF.DiffFunc(LRes[i].first);
+		LRes[i] = TF.DiffFunc(TestFunction, LRes[i].first);
 	}
 }
 
@@ -45,7 +45,7 @@ void GWOAlgorhytm::Iters()
 	FirstIter();
 	X = LRes[WolfQueue].first;
 
-	CurrentY = TF.DiffFunc(X).second;
+	CurrentY = TF.DiffFunc(TestFunction, X).second;
 
 	std::cout << "LRES" << std::endl;
 	for (const auto& [i, j] : LRes)
@@ -154,9 +154,9 @@ void GWOAlgorhytm::Iters()
 		{
 			a = 2 * (1 - t / MaxIterations);
 			CalculateNewX();
-			NewY = TF.DiffFunc(X).second;
+			NewY = TF.DiffFunc(TestFunction, X).second;
 
-			LNewRes[i] = TF.DiffFunc(X);
+			LNewRes[i] = TF.DiffFunc(TestFunction, X);
 
 			std::cout << "NEWTABLE" << std::endl;
 			for (const auto& [i, j] : LNewRes)
@@ -328,7 +328,7 @@ std::pair<float, float> GWOAlgorhytm::CalculateAAndC()
 
 
 
-std::pair<std::vector<float>, float> TestingFunctions::DiffFunc(std::vector<float>& InV)
+std::pair<std::vector<float>, float> TestingFunctions::DiffFunc(E_TestFunction TestFunction, std::vector<float>& InV)
 {
 	const float h = 0.0001;
 	auto LVP = InV;
@@ -342,7 +342,21 @@ std::pair<std::vector<float>, float> TestingFunctions::DiffFunc(std::vector<floa
 	{
 		i = i - h;
 	}
-	float diff = (RastriginFunction(LVP).second - RastriginFunction(LVM).second) / (2.0 * h);
+
+	float diff = -1.0f;
+	switch (TestFunction)
+	{
+	case E_TestFunction::Rastrigin:
+	{
+		diff = (RastriginFunction(LVP).second - RastriginFunction(LVM).second) / (2.0 * h);
+	}
+	break;
+	case E_TestFunction::Other:
+	{
+
+	}
+	break;
+	}
 	return { InV, diff };
 }
 
