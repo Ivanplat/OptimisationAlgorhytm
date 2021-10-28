@@ -1,26 +1,22 @@
 ﻿#pragma once
 #include <vector>
-class LibFunc
-{
-public:
-	LibFunc() = default;
-	float CalculateFunc(float x1, float x2);
-};
+#include <functional>
 
 
 class GWOAlgorhytm
 {
 	typedef std::vector<std::pair<std::vector<float>, float>> ResV;
 public:
-	GWOAlgorhytm() noexcept = default;
+	explicit GWOAlgorhytm() noexcept = default;
 	explicit GWOAlgorhytm(int NumberOfPopulation, int MaxIterations, float LBound, float UBound) noexcept : NumberOfPopulation(NumberOfPopulation), MaxIterations(MaxIterations), LBound(LBound), UBound(UBound) {}
 	virtual ~GWOAlgorhytm() noexcept = default;
 public:
 	std::pair<std::vector<float>, float> TestFunc(std::vector<float> InV);
 	void FirstIter();
+	void Iters();
 private:
 	void InitLRes();
-	void FindBestResults();
+	void FindBestResults(ResV& res);
 	void CalculateNewX();
 	void CalculateX1();
 	void CalculateX2();
@@ -29,7 +25,7 @@ private:
 	std::pair<float, float> CalculateAAndC();
 private:
 	ResV LRes;
-	int NumberOfPopulation = 100;
+	int NumberOfPopulation = 5;
 	int MaxIterations = 200;
 	int t = 0;
 	float a = 2.0f;
@@ -44,4 +40,17 @@ private:
 	std::pair<std::vector<float>, float> BestA;
 	std::pair<std::vector<float>, float> BestB;
 	std::pair<std::vector<float>, float> BestD;
+};
+
+
+class TestingFunctions
+{
+	typedef std::vector<std::pair<std::vector<float>, float>> ResV;
+	typedef std::pair<std::vector<float>, float> ResP;
+public:
+	explicit TestingFunctions() noexcept = default;
+	virtual ~TestingFunctions() noexcept = default;
+public:
+	std::pair<std::vector<float>, float> DiffFunc(std::vector<float>& InV);
+	std::pair<std::vector<float>, float> RastriginFunction(std::vector<float> InV);
 };

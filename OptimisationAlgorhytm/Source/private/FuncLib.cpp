@@ -3,12 +3,6 @@
 #include <random>
 #include <iostream>
 
-float LibFunc::CalculateFunc(float x1, float x2)
-{
-	const float Pi = 3.1415926;
-	return 20 + pow(x1,2)+pow(x2, 2)-10*cos(2*Pi*x1)-10*cos(2*Pi*x2);
-}
-
 std::pair<std::vector<float>, float> GWOAlgorhytm::TestFunc(std::vector<float> InV)
 {
 	const float Pi = 3.1415926;
@@ -24,14 +18,15 @@ std::pair<std::vector<float>, float> GWOAlgorhytm::TestFunc(std::vector<float> I
 void GWOAlgorhytm::FirstIter()
 {
 	InitLRes();
-
+	TestingFunctions TF;
+	
 	for (int i = 0; i < NumberOfPopulation; i++)
 	{
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		std::uniform_real_distribution<> r1(0, 1);
 		std::uniform_real_distribution<> r2(0, 1);
-		float x1 = LBound + r1(gen) * (UBound - LBound);
+		float x1 = LBound + r1(gen) * (UBound - LBound);			
 		float x2 = LBound + r2(gen) * (UBound - LBound);
 
 		auto l = std::make_pair<std::vector<float>, float>(std::vector<float>(0.0f, 0.0f), float());
@@ -39,27 +34,151 @@ void GWOAlgorhytm::FirstIter()
 
 
 		LRes[i].first = { x1, x2 };
-		LRes[i] = TestFunc(LRes[i].first);
+		LRes[i] = TF.DiffFunc(LRes[i].first);
 	}
-	X = LRes[0].first;
-	CurrentY = TestFunc(X).second;
+}
 
+void GWOAlgorhytm::Iters()
+{
+	TestingFunctions TF;
+	int WolfQueue = 0;
+	FirstIter();
+	X = LRes[WolfQueue].first;
+
+	CurrentY = TF.DiffFunc(X).second;
+
+	std::cout << "LRES" << std::endl;
 	for (const auto& [i, j] : LRes)
 	{
-		std::cout << "X1: " << i[0] << " X2: " << i[1] << " f: " << j << std::endl;
+		std::cout << "[" << i[0] << ";  " << i[1] << " ] " << j << std::endl;
 	}
+	std::cout << "Now X: " << "[" << X[0] << "; " << X[1] << "]" << std::endl;
+	t++;
+#ifdef test
+	//
+	ResV LNewRes = LRes;
+	FindBestResults(LRes);
+	a = 2 * (1 - t / MaxIterations);
+	CalculateNewX();
+	NewY = TestFunc(X).second;
 
-	FindBestResults();
+	LNewRes[0] = TestFunc(X);
 
-	
-	std::cout << "START MAIN LOOP: " << std::endl;
-	/*while (NewY < CurrentY)
+	std::cout << "NEWTABLE" << std::endl;
+	for (const auto& [i, j] : LNewRes)
 	{
-		a = 2 * (1 - t / MaxIterations);
-		CalculateNewX();
-		NewY = TestFunc(X).second;
-		std::cout << "[" << TestFunc(X).first[0] << "; " << TestFunc(X).first[1] << "]" << " : " << TestFunc(X).second << ";" << std::endl;
-	}*/
+		std::cout << "[" << i[0] << ";  " << i[1] << " ] " << j << std::endl;
+	}
+	WolfQueue++;
+	t++;
+	//
+	//
+	X = LRes[WolfQueue].first;
+	std::cout << "Now X: " << "[" << X[0] << "; " << X[1] << "]" << std::endl;
+	FindBestResults(LRes);
+	a = 2 * (1 - t / MaxIterations);
+	CalculateNewX();
+	NewY = TestFunc(X).second;
+
+	LNewRes[1] = TestFunc(X);
+
+	std::cout << "NEWTABLE" << std::endl;
+	for (const auto& [i, j] : LNewRes)
+	{
+		std::cout << "[" << i[0] << ";  " << i[1] << " ] " << j << std::endl;
+	}
+	WolfQueue++;
+	t++;
+	//
+	//
+	X = LRes[WolfQueue].first;
+	std::cout << "Now X: " << "[" << X[0] << "; " << X[1] << "]" << std::endl;
+	FindBestResults(LRes);
+	a = 2 * (1 - t / MaxIterations);
+	CalculateNewX();
+	NewY = TestFunc(X).second;
+
+	LNewRes[2] = TestFunc(X);
+
+	std::cout << "NEWTABLE" << std::endl;
+	for (const auto& [i, j] : LNewRes)
+	{
+		std::cout << "[" << i[0] << ";  " << i[1] << " ] " << j << std::endl;
+	}
+	WolfQueue++;
+	t++;
+	//
+	//
+	X = LRes[WolfQueue].first;
+	std::cout << "Now X: " << "[" << X[0] << "; " << X[1] << "]" << std::endl;
+	FindBestResults(LRes);
+	a = 2 * (1 - t / MaxIterations);
+	CalculateNewX();
+	NewY = TestFunc(X).second;
+
+	LNewRes[3] = TestFunc(X);
+
+	std::cout << "NEWTABLE" << std::endl;
+	for (const auto& [i, j] : LNewRes)
+	{
+		std::cout << "[" << i[0] << ";  " << i[1] << " ] " << j << std::endl;
+	}
+	WolfQueue++;
+	t++;
+	//
+	//
+	X = LRes[WolfQueue].first;
+	std::cout << "Now X: " << "[" << X[0] << "; " << X[1] << "]" << std::endl;
+	FindBestResults(LRes);
+	a = 2 * (1 - t / MaxIterations);
+	CalculateNewX();
+	NewY = TestFunc(X).second;
+
+	LNewRes[4] = TestFunc(X);
+
+	std::cout << "NEWTABLE" << std::endl;
+	for (const auto& [i, j] : LNewRes)
+	{
+		std::cout << "[" << i[0] << ";  " << i[1] << " ] " << j << std::endl;
+	}
+	WolfQueue++;
+	t++;
+	//
+	LRes = LNewRes;
+#endif
+	ResV LNewRes = LRes;
+	while (t < MaxIterations)
+	{
+		FindBestResults(LRes);
+		for (int i = 0; i < NumberOfPopulation; i++)
+		{
+			a = 2 * (1 - t / MaxIterations);
+			CalculateNewX();
+			NewY = TF.DiffFunc(X).second;
+
+			LNewRes[i] = TF.DiffFunc(X);
+
+			std::cout << "NEWTABLE" << std::endl;
+			for (const auto& [i, j] : LNewRes)
+			{
+				std::cout << "[" << i[0] << ";  " << i[1] << " ] " << j << std::endl;
+			}
+			WolfQueue++;
+			t++;
+		}
+		LRes = LNewRes;
+	}
+	std::cout << std::endl;
+	std::cout << "------------------------------------------" << std::endl;
+	std::cout << "------------------------------------------" << std::endl;
+	std::cout << "------------------------------------------" << std::endl;
+	std::cout << "\tBEST RESULT: " << std::endl;
+	std::cout << "------------------------------------------" << std::endl;
+	std::cout << "------------------------------------------" << std::endl;
+
+	auto c =FindBestLocal(LRes);
+
+	std::wcout << c.first[0] << " " << c.first[1] << " "<<c.second<< std::endl;
 }
 
 void GWOAlgorhytm::InitLRes()
@@ -67,9 +186,9 @@ void GWOAlgorhytm::InitLRes()
 
 }
 
-void GWOAlgorhytm::FindBestResults()
+void GWOAlgorhytm::FindBestResults(ResV& res)
 {
-	auto l = LRes;
+	auto l = res;
 	BestA = FindBestLocal(l);
 	BestB = FindBestLocal(l);
 	BestD = FindBestLocal(l);
@@ -90,6 +209,8 @@ void GWOAlgorhytm::CalculateNewX()
 	{
 		X[i] = (X1[i] + X2[i] + X3[i]) / 3;
 	}
+	std::cout << std::endl;
+	std::cout << "New best X: " << "[" << X[0] << "; " << X[1] <<"]"<< std::endl;
 }
 
 void GWOAlgorhytm::CalculateX1()
@@ -180,7 +301,8 @@ std::pair<std::vector<float>, float> GWOAlgorhytm::FindBestLocal(ResV& lV)
 	std::vector<float> v;
 	for (int i = 0; i < lV.size(); i++)
 	{
-		if (lV[i].second < lCurMin)
+		auto c = abs(lV[i].second);
+		if (c < lCurMin)
 		{			
 			v = { lV[i].first[0], lV[i].first[1] };
 			lCurMin = lV[i].second;
@@ -202,4 +324,36 @@ std::pair<float, float> GWOAlgorhytm::CalculateAAndC()
 	float C = 2 * r2(gen);
 
 	return { A, C };
+}
+
+
+
+std::pair<std::vector<float>, float> TestingFunctions::DiffFunc(std::vector<float>& InV)
+{
+	const float h = 0.0001;
+	auto LVP = InV;
+	auto LVM = InV;
+	for (auto& i : LVP)
+	{
+		i = i + h;
+	}
+
+	for (auto& i : LVM)
+	{
+		i = i - h;
+	}
+	float diff = (RastriginFunction(LVP).second - RastriginFunction(LVM).second) / (2.0 * h);
+	return { InV, diff };
+}
+
+std::pair<std::vector<float>, float> TestingFunctions::RastriginFunction(std::vector<float> InV)
+{
+	const float Pi = 3.1415926;
+	int n = InV.size();
+	float res = 0;
+	for (int i = 0; i < n; i++)
+	{
+		res += pow(InV[i], 2) - 10 * cos(InV[i]) + 10;
+	}
+	return { InV, res };
 }
